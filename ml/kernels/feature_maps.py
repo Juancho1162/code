@@ -18,7 +18,6 @@ Z = feature_map_1(X)
 # with the make circles dataset, we can see that the data is not linearly separable
 # but with the feature map, we can see that the data is linearly separable
 # lets plot both the 2d  and the feature map data to see the difference,
-# puting the correct labels on the plot
 
 fig, ax = plt.subplots(1, 2, figsize=(12, 6))
 ax[0] = fig.add_subplot(121)
