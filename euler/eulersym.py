@@ -1,8 +1,5 @@
 # I want to do a simulation of the approximation
 # of the number e, using the compound interest formula
-# I want to do an interactive plot of the approximation
-# of e, being able to changue the nummber of times
-# the interest is compounded.
 
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
