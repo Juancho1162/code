@@ -1,3 +1,4 @@
+# Faster implementation of the Euler 1 problem with numpy
 import numpy as np
 
 numbers = np.arange(1000)
