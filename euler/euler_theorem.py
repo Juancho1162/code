@@ -1,3 +1,10 @@
+"""
+Shows the convergence of (1 + i*theta/n)^n to e^{i*theta} as n increases,
+looping over different values of theta and n, showing that 
+iterating theta over [0, 2pi] we get the unit circle in the complex plane
+and the equivalence with sum of imaginary sines and real cosines of the angle.
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.patches as patches
