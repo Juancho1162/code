@@ -1,0 +1,9 @@
+project:
+  preview:
+    port: 7171
+    host: 0.0.0.0
+
+
+
+
+
