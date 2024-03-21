@@ -1,0 +1,54 @@
+
+---
+title: "From Linear Separability to Kernel Tricks"
+format:
+   html:
+      code-fold: true
+jupyter: python3
+---
+
+### Linear Separability
+Let $X_0$ and $X_1$ be two sets of points in an n-dimensional space. We say that $X_0$ and $X_1$ are linearly separable if there exists a hyperplane that separates the two sets. In other words, there exists a vector $w$ and a scalar $b$ such that for all $x_0 \in X_0$ and $x_1 \in X_1$, we have $w \cdot x_0 > b$ and $w \cdot x_1 < b$. 
+
+Lets say we are working in $R^2$ and we have two sets of points $X_0$ and $X_1$ as shown below. So, let's say, to simplify our problem, 
+that we have only one point in $X_0$ and one point in $X_1$, represented by one vector for each set.
+
+$$
+\begin{gather}
+\vec{v_0} = 1 i + 2 j \\
+\vec{v_1} = 5 i + 4 j
+\end{gather}
+$$
+
+If we want to check that the two sets are linearly separable, we need to solve:
+$$
+\begin{gather}
+\vec{w} \cdot \vec{v_0} = 1w_1 + 2w_2 < b\\
+\vec{w} \cdot \vec{v_1} = 5w_1 + 4w_2 > b\\
+\text{For some } \vec{w} = w_1 i + w_2 j \text{ and for some } b \in R
+\end{gather}
+$$
+
+It is trivial that for $w_1 = 1, w_2 = 1, b = 5$, the above equations hold. So, the two sets are linearly separable.
+Lets make a plot using python to visualize the hyperplane that separates the two sets, and the two sets themselves,as vectors.
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+# The equation of the hyperplane is w1x1 + w2x2 = b
+# So in our case, the equation of the hyperplane is x1 + x2 = 5
+x = np.linspace(0, 5, 100)
+y = 5 - x
+
+plt.plot(x, y, label='Hyperplane: x1 + x2 = 5')
+plt.scatter([1, 5], [2, 4], color=['red', 'blue'], label='Vectors')
+plt.legend()
+plt.show()
+```
+
+
+This problem was easy, but as the dimensions and the points increase, it becomes a difficult problem to solve by hand.
+This is where we can talk about the perceptron.
+
+### Perceptron

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Test</title>
+<title>From Linear Separability to Kernel Tricks</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -57,17 +57,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="index_files/libs/clipboard/clipboard.min.js"></script>
-<script src="index_files/libs/quarto-html/quarto.js"></script>
-<script src="index_files/libs/quarto-html/popper.min.js"></script>
-<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="index_files/libs/quarto-html/anchor.min.js"></script>
-<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="index_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="index_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="index_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="kernels_files/libs/clipboard/clipboard.min.js"></script>
+<script src="kernels_files/libs/quarto-html/quarto.js"></script>
+<script src="kernels_files/libs/quarto-html/popper.min.js"></script>
+<script src="kernels_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="kernels_files/libs/quarto-html/anchor.min.js"></script>
+<link href="kernels_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="kernels_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="kernels_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="kernels_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="kernels_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -79,7 +108,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Test</h1>
+<h1 class="title">From Linear Separability to Kernel Tricks</h1>
 </div>
 
 
@@ -96,27 +125,53 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Test doing a plot in a code cell</p>
-<div id="1aced37b" class="cell" data-execution_count="1">
+<section id="linear-separability" class="level3">
+<h3 class="anchored" data-anchor-id="linear-separability">Linear Separability</h3>
+<p>Let <span class="math inline">\(X_0\)</span> and <span class="math inline">\(X_1\)</span> be two sets of points in an n-dimensional space. We say that <span class="math inline">\(X_0\)</span> and <span class="math inline">\(X_1\)</span> are linearly separable if there exists a hyperplane that separates the two sets. In other words, there exists a vector <span class="math inline">\(w\)</span> and a scalar <span class="math inline">\(b\)</span> such that for all <span class="math inline">\(x_0 \in X_0\)</span> and <span class="math inline">\(x_1 \in X_1\)</span>, we have <span class="math inline">\(w \cdot x_0 &gt; b\)</span> and <span class="math inline">\(w \cdot x_1 &lt; b\)</span>.</p>
+<p>Lets say we are working in <span class="math inline">\(R^2\)</span> and we have two sets of points <span class="math inline">\(X_0\)</span> and <span class="math inline">\(X_1\)</span> as shown below. So, let’s say, to simplify our problem, that we have only one point in <span class="math inline">\(X_0\)</span> and one point in <span class="math inline">\(X_1\)</span>, represented by one vector for each set.</p>
+<p><span class="math display">\[
+\begin{gather}
+\vec{v_0} = 1 i + 2 j \\
+\vec{v_1} = 5 i + 4 j
+\end{gather}
+\]</span></p>
+<p>If we want to check that the two sets are linearly separable, we need to solve: <span class="math display">\[
+\begin{gather}
+\vec{w} \cdot \vec{v_0} = 1w_1 + 2w_2 &lt; b\\
+\vec{w} \cdot \vec{v_1} = 5w_1 + 4w_2 &gt; b\\
+\text{For some } \vec{w} = w_1 i + w_2 j \text{ and for some } b \in R
+\end{gather}
+\]</span></p>
+<p>It is trivial that for <span class="math inline">\(w_1 = 1, w_2 = 1, b = 5\)</span>, the above equations hold. So, the two sets are linearly separable. Lets make a plot using python to visualize the hyperplane that separates the two sets, and the two sets themselves,as vectors.</p>
+<div id="1499d775" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">100</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.sin(x)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>plt.plot(x, y)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># The equation of the hyperplane is w1x1 + w2x2 = b</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># So in our case, the equation of the hyperplane is x1 + x2 = 5</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">5</span>, <span class="dv">100</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="dv">5</span> <span class="op">-</span> x</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>plt.plot(x, y, label<span class="op">=</span><span class="st">'Hyperplane: x1 + x2 = 5'</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>plt.scatter([<span class="dv">1</span>, <span class="dv">5</span>], [<span class="dv">2</span>, <span class="dv">4</span>], color<span class="op">=</span>[<span class="st">'red'</span>, <span class="st">'blue'</span>], label<span class="op">=</span><span class="st">'Vectors'</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/cell-2-output-1.png" width="590" height="411" class="figure-img"></p>
+<p><img src="kernels_files/figure-html/cell-2-output-1.png" width="558" height="404" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>This problem was easy, but as the dimensions and the points increase, it becomes a difficult problem to solve by hand. This is where we can talk about the perceptron.</p>
+</section>
+<section id="perceptron" class="level3">
+<h3 class="anchored" data-anchor-id="perceptron">Perceptron</h3>
+</section>
 
 </main>
 <!-- /main column -->
