@@ -9,6 +9,7 @@ import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
 
+##
 
 # Función para calcular (1 + i*theta/n)^n
 def calculate_exponential(theta, n):
